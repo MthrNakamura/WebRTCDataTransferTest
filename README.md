@@ -1,4 +1,3 @@
-# AppRTCDemo
-WebRTC iOS example
+WebRTC for iOS DataChannelTest
+This is a simple WebRTC chat program based on AppRTCDemo.
 
-easy to use demo from https://chromium.googlesource.com/external/webrtc.git
