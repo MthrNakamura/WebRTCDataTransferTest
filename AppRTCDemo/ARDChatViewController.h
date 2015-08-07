@@ -12,6 +12,8 @@
 @interface ARDChatViewController : JSQMessagesViewController 
 
 
+
+
 @property (strong, nonatomic) NSString* roomText;
 
 

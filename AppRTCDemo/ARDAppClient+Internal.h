@@ -36,6 +36,8 @@
 #import <WebRTC/RTCSessionDescriptionDelegate.h>
 #import <WebRTC/RTCDataChannel.h>
 
+#define NUM_DC 2
+
 @interface ARDAppClient () <ARDSignalingChannelDelegate,
     RTCPeerConnectionDelegate, RTCSessionDescriptionDelegate, RTCDataChannelDelegate>
 
@@ -44,7 +46,8 @@
 @property(nonatomic, strong) id<ARDSignalingChannel> channel;
 @property(nonatomic, strong) id<ARDTURNClient> turnClient;
 
-@property(nonatomic, strong) RTCDataChannel *dataChannel;
+@property(nonatomic, strong) NSMutableArray* dataChannels;
+//@property(nonatomic, strong) RTCDataChannel *dataChannel;
 @property(nonatomic, strong) RTCPeerConnection *peerConnection;
 @property(nonatomic, strong) RTCPeerConnectionFactory *factory;
 @property(nonatomic, strong) NSMutableArray *messageQueue;

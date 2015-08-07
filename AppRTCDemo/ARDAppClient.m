@@ -48,6 +48,10 @@
 #import "RTCICECandidate+JSON.h"
 #import "RTCSessionDescription+JSON.h"
 
+#import "ARDTransData.h"
+
+
+#import <zlib.h>
 
 static NSString * const kARDDefaultSTUNServerUrl =
     @"stun:stun.l.google.com:19302";
@@ -64,7 +68,15 @@ static NSInteger const kARDAppClientErrorSetSDP = -4;
 static NSInteger const kARDAppClientErrorInvalidClient = -5;
 static NSInteger const kARDAppClientErrorInvalidRoom = -6;
 
-@implementation ARDAppClient
+@implementation ARDAppClient {
+    //NSMutableData* receivedData;
+    NSInteger numBlocks;
+    double mean_mbps;
+    double prevTime;
+    double totalProcTime;
+    int countChunk;
+    NSMutableArray* receivedData;
+}
 
 @synthesize delegate = _delegate;
 @synthesize state = _state;
@@ -84,7 +96,8 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
 @synthesize webSocketRestURL = _websocketRestURL;
 @synthesize defaultPeerConnectionConstraints =
     _defaultPeerConnectionConstraints;
-@synthesize dataChannel = _dataChannel;
+//@synthesize dataChannel = _dataChannel;
+@synthesize dataChannels = _dataChannels;
 
 - (instancetype)init {
   if (self = [super init]) {
@@ -93,6 +106,8 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
     _turnClient = [[ARDCEODTURNClient alloc] initWithURL:turnRequestURL];
     [self configure];
   }
+    numBlocks = -1;
+    
   return self;
 }
 
@@ -104,7 +119,9 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
     _turnClient = [[ARDCEODTURNClient alloc] initWithURL:turnRequestURL];
     [self configure];
   }
-  return self;
+    numBlocks = -1;
+    
+    return self;
 }
 
 // TODO(tkchin): Provide signaling channel factory interface so we can recreate
@@ -124,6 +141,8 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
     _delegate = delegate;
     [self configure];
   }
+    numBlocks = -1;
+    
   return self;
 }
 
@@ -139,7 +158,7 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
 
 - (void)setState:(ARDAppClientState)state {
   if (_state == state) {
-    return;
+      return;
   }
   _state = state;
   [_delegate appClient:self didChangeState:_state];
@@ -161,7 +180,10 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
     ARDAppClient *strongSelf = weakSelf;
     [strongSelf.iceServers addObjectsFromArray:turnServers];
     strongSelf.isTurnComplete = YES;
-    [strongSelf startSignalingIfReady];
+    
+      
+      [strongSelf startSignalingIfReady];
+          
   }];
 
   // Join room on room server.
@@ -196,7 +218,9 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
     strongSelf.webSocketURL = response.webSocketURL;
     strongSelf.webSocketRestURL = response.webSocketRestURL;
     [strongSelf registerWithColliderIfReady];
-    [strongSelf startSignalingIfReady];
+          
+     [strongSelf startSignalingIfReady];
+              
   }];
 }
 
@@ -328,18 +352,7 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
 - (void)peerConnection:(RTCPeerConnection*)peerConnection
     didOpenDataChannel:(RTCDataChannel*)dataChannel {
     
-    _dataChannel = dataChannel;
-    
-    NSLog(@"label: %@", dataChannel.label);
-    NSLog(@"reliable: %@", dataChannel.isReliable ? @"YES":@"NO");
-    NSLog(@"ordered: %@", dataChannel.isOrdered ? @"YES":@"NO");
-    NSLog(@"maxRetransTime: %d", (unsigned int)dataChannel.maxRetransmitTime);
-    NSLog(@"maxRetransmits: %d", (unsigned int)dataChannel.maxRetransmits);
-    NSLog(@"protocol: %@", dataChannel.protocol);
-    NSLog(@"isNegotiated: %@", dataChannel.isNegotiated ? @"YES":@"NO");
-    NSLog(@"streamId: %d", (int)dataChannel.streamId);
-    NSLog(@"state: %u", dataChannel.state);
-    NSLog(@"buffer amount: %u", (unsigned int)dataChannel.bufferedAmount);
+    //_dataChannel = dataChannel;
 
 }
 
@@ -364,10 +377,12 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
       [_delegate appClient:self didError:sdpError];
       return;
     }
+      
     [_peerConnection setLocalDescriptionWithDelegate:self
                                   sessionDescription:sdp];
     ARDSessionDescriptionMessage *message =
         [[ARDSessionDescriptionMessage alloc] initWithDescription:sdp];
+
     [self sendSignalingMessage:message];
   });
 }
@@ -429,18 +444,33 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
     
     // DataChannelを作成
     RTCDataChannelInit *datainit = [[RTCDataChannelInit alloc] init];
-    datainit.isNegotiated = YES;
-    datainit.isOrdered = YES;
-    //datainit.streamId = 174933;
-    datainit.maxRetransmits = 3;
-    datainit.maxRetransmitTimeMs = 3000;
-    datainit.streamId = 12;
-    _dataChannel = [_peerConnection createDataChannelWithLabel:@"DataChannel-iphone" config:datainit];
     
     
-    if(_dataChannel != nil)
-        [_dataChannel setDelegate:self];
+    if (!_dataChannels) {
+        _dataChannels = [[NSMutableArray alloc] init];
+    }
+    
+    for (int i = 0; i < NUM_DC; ++i) {
+        NSString* ch_label = [NSString stringWithFormat:@"dc%03d", i];
+        NSLog(@"creating data channel #%d", i);
+        
+        
+        datainit.isNegotiated = YES;
+        datainit.isOrdered = YES;
+        datainit.maxRetransmits = 3;
+        datainit.maxRetransmitTimeMs = 10;
+        datainit.streamId = 12 + i;
+        [datainit setProtocol:@"sctp"];
+        
+        RTCDataChannel* dc = [_peerConnection createDataChannelWithLabel:ch_label config:datainit];
+        if (dc) {
+            [_dataChannels addObject:dc];
+            [dc setDelegate:self];
+        }
+    }
 
+    
+    
     
     if (_isInitiator) {
         // Send offer.
@@ -587,8 +617,8 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
 
 - (RTCMediaConstraints *)defaultOfferConstraints {
   NSArray *mandatoryConstraints = @[
-      [[RTCPair alloc] initWithKey:@"OfferToReceiveAudio" value:@"true"],
-      [[RTCPair alloc] initWithKey:@"OfferToReceiveVideo" value:@"true"]
+     [[RTCPair alloc] initWithKey:@"OfferToReceiveAudio" value:@"false"],
+      [[RTCPair alloc] initWithKey:@"OfferToReceiveVideo" value:@"false"]
   ];
     
     NSArray *optional = @[
@@ -703,25 +733,184 @@ static NSInteger const kARDAppClientErrorInvalidRoom = -6;
 #pragma mark - RTCDataChannelDelegate
 - (void)channel:(RTCDataChannel *)channel didReceiveMessageWithBuffer:(RTCDataBuffer *)buffer
 {
-    [_delegate appClient:self didReceiveRemoteData:buffer];
+    // 受信時刻
+    double recTime = [NSDate timeIntervalSinceReferenceDate];
+    
+    
+    
+    // データを取得
+    ARDTransData* data = [NSKeyedUnarchiver unarchiveObjectWithData:buffer.data];
+    
+    if (!receivedData)
+        receivedData = [[NSMutableArray alloc] init];
+    //[receivedData appendData:data.data];
+    [receivedData addObject:data];
+   
+    if (data.isFirst) {
+        mean_mbps = 0.0;
+        countChunk = 0;
+        prevTime = recTime;
+        totalProcTime = 0.0;
+    }
+    
+    ++countChunk;
+    
+    // 最後のデータを処理
+    //NSLog(@"%d/%d", (int)receivedData.count, (int)data.total_chunk);
+    if (data.total_chunk == receivedData.count) {
+        
+        NSLog(@"complete!");
+        // 受信したデータを並べる
+        NSArray* sorted = [receivedData sortedArrayUsingSelector:@selector(compareId:)];
+        NSMutableData* merged = [[NSMutableData alloc] init];
+        for (ARDTransData* d in sorted) {
+            [merged appendData:d.data];
+        }
+        
+        // 転送速度を計算
+        double sendingTime = recTime - prevTime - totalProcTime;
+        double mbps = (((double)((int)merged.length)) / (sendingTime + DBL_MIN)) / (1024.0 * 1024.0);
+        
+        NSString* timeStr;
+        if (data.isFirst)
+            timeStr = [[NSString alloc] initWithFormat:@"計測不能"];
+        else
+            timeStr = [[NSString alloc] initWithFormat:@"%lf MB/s (%lf MB / %lf s)", mbps, (double)((double)merged.length / (1024.0*1024.0)), sendingTime];
+        
+        
+        //NSLog(@"time: %lf, speed: %lf MB/s", sendingTime, mbps);
+        
+        
+        RTCDataBuffer* buf = [[RTCDataBuffer alloc] initWithData:merged isBinary:data.isBinary];
+        [_delegate appClient:self didReceiveRemoteData:buf];
+        numBlocks = -1;
+        //NSLog(@"complete: %lf MB/s", mean_mbps / (double)countChunk);
+        
+        
+        NSData* timeData = [timeStr dataUsingEncoding:NSUTF8StringEncoding];
+        [_delegate appClient:self didReceiveRemoteData:[[RTCDataBuffer alloc] initWithData:timeData isBinary:NO]];
+        
+        receivedData = nil;
+        
+        return;
+    }
+    
+    // ローカルの処理時間を計算
+    double procEnd = [NSDate timeIntervalSinceReferenceDate];
+    totalProcTime += (procEnd - recTime);
+    
 }
+
+
 
 - (void)channelDidChangeState:(RTCDataChannel *)channel
 {
+    
     NSLog(@"DataChannel: change State");
-    _dataChannel = channel;
+    NSLog(@"****************************************");
+    NSLog(@"label: %@", channel.label);
+    NSLog(@"reliable: %@", channel.isReliable ? @"YES":@"NO");
+    NSLog(@"ordered: %@", channel.isOrdered ? @"YES":@"NO");
+    NSLog(@"maxRetransTime: %d", (unsigned int)channel.maxRetransmitTime);
+    NSLog(@"maxRetransmits: %d", (unsigned int)channel.maxRetransmits);
+    NSLog(@"protocol: %@", channel.protocol);
+    NSLog(@"isNegotiated: %@", channel.isNegotiated ? @"YES":@"NO");
+    NSLog(@"streamId: %d", (int)channel.streamId);
+    NSLog(@"state: %u", channel.state);
+    NSLog(@"buffer amount: %d", (int)channel.bufferedAmount);
+    
+    int num_dc = (int)_dataChannels.count;
+    for (int i = 0; i < num_dc; ++i) {
+        RTCDataChannel* dc = [_dataChannels objectAtIndex:i];
+        if ([channel.label isEqualToString:dc.label]) {
+            [_dataChannels removeObjectAtIndex:i];
+            [_dataChannels addObject:channel];
+            break;
+        }
+    }
+
     
     [_delegate appClient:self didChangeDataChannelState:channel.state];
-    
 }
 
-- (void)sendData:(NSData *)data
+- (NSMutableArray *)splitData:(NSData *)data
 {
-    RTCDataBuffer* buffer = [[RTCDataBuffer alloc] initWithData:data isBinary:NO];
-    if ([_dataChannel sendData:buffer]) {
-        NSLog(@"success");
+    NSMutableArray* res = [[NSMutableArray alloc] init];
+    NSUInteger length = [data length];
+    NSUInteger chunkSize = MAX_BLOCK_SIZE;
+    NSRange dataRange;
+    
+    dataRange.location = 0;
+    do {
+        
+        NSUInteger thisChunkSize =
+            ((length - dataRange.location) > chunkSize) ? chunkSize : (length-dataRange.location);
+        dataRange.length = thisChunkSize;
+        NSData* chunk = [data subdataWithRange:dataRange];
+        [res addObject:chunk];
+        
+        dataRange.location += thisChunkSize;
+        
+    } while (dataRange.location < length);
+    
+    return res;
+}
+
+- (void)sendData:(NSData *)data isBinary:(BOOL)isBinary userId:(NSString *)userId
+{
+    //[_dataChannel sendData:[[RTCDataBuffer alloc] initWithData:data isBinary:isBinary]];
+    
+    NSRange dataRange;
+    NSUInteger dataSize = data.length;
+    NSUInteger dataSplitCount = dataSize / MAX_BLOCK_SIZE;
+    //NSUInteger restChunk = ((dataSize % MAX_BLOCK_SIZE)==0) ? 0 : 1;
+    NSLog(@"dataSize: %d", (int)data.length);
+    NSLog(@"count: %d", (int)dataSplitCount);
+    
+    //
+    // データ本体を送信
+    //
+    dataRange.length = MAX_BLOCK_SIZE;
+    dataRange.location = 0;
+    NSMutableArray *dataArray = [self splitData:data];
+    
+    int numChunk = (int)dataArray.count;
+    uint32_t count = 0;
+    NSMutableArray* bufferArray = [[NSMutableArray alloc] init];
+    for (NSData* d in dataArray) {
+
+        ARDTransData* td = [[ARDTransData alloc] init];
+        td.data = [[NSData alloc] initWithData:d];
+        td.isBinary = isBinary;
+        td.isLast = (count == (int)dataSplitCount);
+        td.isFirst = (count == 0);
+        td.chunk_id = count;
+        td.total_chunk = (uint32_t)numChunk;
+        
+        NSData* data = [NSKeyedArchiver archivedDataWithRootObject:td];
+        
+        RTCDataBuffer* buffer = [[RTCDataBuffer alloc] initWithData:data isBinary:isBinary];
+        [bufferArray addObject:buffer];
+        ++count;
     }
     
+    count = 0;
+    for (RTCDataBuffer* buffer in bufferArray) {
+        RTCDataChannel* dc = [_dataChannels objectAtIndex:count%NUM_DC];
+        
+        if (![dc sendData:buffer]) {
+            NSLog(@"sending error");
+            break;
+        }
+        else {
+            [_delegate appClient:self didChangeDataProgress:(float)count/numChunk];
+        }
+        ++count;
+    }
+    
+    [_delegate appClient:self didChangeDataProgress:1.0f];
+
 }
+
 
 @end

@@ -30,6 +30,9 @@
 #import <WebRTC/RTCVideoTrack.h>
 #import <WebRTC/RTCDataChannel.h>
 
+#define MAX_BLOCK_SIZE (16*1024) // ブロックサイズ[B]
+
+
 typedef NS_ENUM(NSInteger, ARDAppClientState) {
   // Disconnected from servers.
   kARDAppClientStateDisconnected,
@@ -63,6 +66,7 @@ typedef NS_ENUM(NSInteger, ARDAppClientState) {
 - (void)appClient:(ARDAppClient *)client didReceiveRemoteData:(RTCDataBuffer *)buffer;
 
 - (void)appClient:(ARDAppClient *)client didChangeDataChannelState:(RTCDataChannelState)state;
+- (void)appClient:(ARDAppClient *)client didChangeDataProgress:(float)progress;
 
 @end
 
@@ -72,6 +76,7 @@ typedef NS_ENUM(NSInteger, ARDAppClientState) {
 
 @property(nonatomic, readonly) ARDAppClientState state;
 @property(nonatomic, weak) id<ARDAppClientDelegate> delegate;
+
 
 // Convenience constructor since all expected use cases will need a delegate
 // in order to receive remote tracks.
@@ -87,6 +92,7 @@ typedef NS_ENUM(NSInteger, ARDAppClientState) {
 // Disconnects from the AppRTC servers and any connected clients.
 - (void)disconnect;
 
-- (void)sendData:(NSData *)data;
+- (void)sendData:(NSData *)data isBinary:(BOOL)isBinary userId:(NSString *)userId;
+
 
 @end

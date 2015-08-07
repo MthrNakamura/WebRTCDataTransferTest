@@ -50,7 +50,11 @@ static NSString const *kARDSignalingMessageTypeKey = @"type";
 }
 
 + (ARDSignalingMessage *)messageFromJSONString:(NSString *)jsonString {
+    
+    
+    
   NSDictionary *values = [NSDictionary dictionaryWithJSONString:jsonString];
+    
   if (!values) {
     NSLog(@"Error parsing signaling message JSON.");
     return nil;
@@ -64,6 +68,13 @@ static NSString const *kARDSignalingMessageTypeKey = @"type";
     message = [[ARDICECandidateMessage alloc] initWithCandidate:candidate];
   } else if ([typeString isEqualToString:@"offer"] ||
              [typeString isEqualToString:@"answer"]) {
+      /*
+      jsonString = [jsonString stringByReplacingOccurrencesOfString:@"a=mid:data" withString:@"a=mid:data\\r\\nb=AS:30720"];
+      
+      NSLog(@"EEEEEEEEEEEEEEEEEEEEEEEEEE");
+      NSLog(@"%@", jsonString);
+      values = [NSDictionary dictionaryWithJSONString:jsonString];
+      */
     RTCSessionDescription *description =
         [RTCSessionDescription descriptionFromJSONDictionary:values];
     message =

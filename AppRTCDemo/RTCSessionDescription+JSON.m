@@ -36,6 +36,7 @@ static NSString const *kRTCSessionDescriptionSdpKey = @"sdp";
     (NSDictionary *)dictionary {
   NSString *type = dictionary[kRTCSessionDescriptionTypeKey];
   NSString *sdp = dictionary[kRTCSessionDescriptionSdpKey];
+    
   return [[RTCSessionDescription alloc] initWithType:type sdp:sdp];
 }
 

@@ -40,6 +40,8 @@
 		50219E4D1AD6AE2A000C0FF1 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 50219E4C1AD6AE2A000C0FF1 /* libicucore.dylib */; };
 		50BBA8A91AFB431B00E03A94 /* ic_switch_video_black_24dp.png in Resources */ = {isa = PBXBuildFile; fileRef = 50BBA8A71AFB431B00E03A94 /* ic_switch_video_black_24dp.png */; };
 		50BBA8AA1AFB431B00E03A94 /* ic_switch_video_black_24dp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 50BBA8A81AFB431B00E03A94 /* ic_switch_video_black_24dp@2x.png */; };
+		D21484FF1B74A60F0023AD16 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D21484FE1B74A60F0023AD16 /* libz.dylib */; };
+		D2274F0A1B65369800C9280A /* ARDTransData.m in Sources */ = {isa = PBXBuildFile; fileRef = D2274F091B65369800C9280A /* ARDTransData.m */; };
 		D23A2FE11B4BEC4D00D2F5AC /* ARDChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D23A2FDF1B4BEC4D00D2F5AC /* ARDChatViewController.m */; };
 		D23A2FEA1B4BFE1400D2F5AC /* TopViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D23A2FE91B4BFE1400D2F5AC /* TopViewController.m */; };
 		D23A301E1B4C0A8700D2F5AC /* ARDChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D23A301D1B4C0A8700D2F5AC /* ARDChatViewController.xib */; };
@@ -92,6 +94,7 @@
 		D2605E281B4C5812008D670C /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D2605E251B4C5812008D670C /* Info.plist */; };
 		D2605E291B4C5812008D670C /* JSQSystemSoundPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = D2605E271B4C5812008D670C /* JSQSystemSoundPlayer.m */; };
 		D2605E2A1B4C58B1008D670C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2605DB51B4C55E7008D670C /* AudioToolbox.framework */; };
+		D2B1BD141B4D497E00291124 /* image_mediam.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D2B1BD121B4D497E00291124 /* image_mediam.jpg */; };
 		D2CAA5721B4C6F4D0003DD23 /* SVIndefiniteAnimatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = D2CAA56D1B4C6F4D0003DD23 /* SVIndefiniteAnimatedView.m */; };
 		D2CAA5731B4C6F4D0003DD23 /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D2CAA56F1B4C6F4D0003DD23 /* SVProgressHUD.bundle */; };
 		D2CAA5741B4C6F4D0003DD23 /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = D2CAA5711B4C6F4D0003DD23 /* SVProgressHUD.m */; };
@@ -162,6 +165,9 @@
 		50B7C21A1AD55C2F006CEEC9 /* AppRTCDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppRTCDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		50BBA8A71AFB431B00E03A94 /* ic_switch_video_black_24dp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_switch_video_black_24dp.png; sourceTree = "<group>"; };
 		50BBA8A81AFB431B00E03A94 /* ic_switch_video_black_24dp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_switch_video_black_24dp@2x.png"; sourceTree = "<group>"; };
+		D21484FE1B74A60F0023AD16 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
+		D2274F081B65369800C9280A /* ARDTransData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARDTransData.h; sourceTree = "<group>"; };
+		D2274F091B65369800C9280A /* ARDTransData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARDTransData.m; sourceTree = "<group>"; };
 		D23A2FDE1B4BEC4D00D2F5AC /* ARDChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARDChatViewController.h; sourceTree = "<group>"; };
 		D23A2FDF1B4BEC4D00D2F5AC /* ARDChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARDChatViewController.m; sourceTree = "<group>"; };
 		D23A2FE81B4BFE1400D2F5AC /* TopViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopViewController.h; sourceTree = "<group>"; };
@@ -261,6 +267,7 @@
 		D2605E251B4C5812008D670C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2605E261B4C5812008D670C /* JSQSystemSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSQSystemSoundPlayer.h; sourceTree = "<group>"; };
 		D2605E271B4C5812008D670C /* JSQSystemSoundPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSQSystemSoundPlayer.m; sourceTree = "<group>"; };
+		D2B1BD121B4D497E00291124 /* image_mediam.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = image_mediam.jpg; sourceTree = "<group>"; };
 		D2CAA56C1B4C6F4D0003DD23 /* SVIndefiniteAnimatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVIndefiniteAnimatedView.h; sourceTree = "<group>"; };
 		D2CAA56D1B4C6F4D0003DD23 /* SVIndefiniteAnimatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVIndefiniteAnimatedView.m; sourceTree = "<group>"; };
 		D2CAA56E1B4C6F4D0003DD23 /* SVProgressHUD-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SVProgressHUD-Prefix.pch"; sourceTree = "<group>"; };
@@ -275,6 +282,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D21484FF1B74A60F0023AD16 /* libz.dylib in Frameworks */,
 				D2605E2A1B4C58B1008D670C /* AudioToolbox.framework in Frameworks */,
 				50219E4D1AD6AE2A000C0FF1 /* libicucore.dylib in Frameworks */,
 				50219E491AD6ADBC000C0FF1 /* GLKit.framework in Frameworks */,
@@ -323,6 +331,7 @@
 		50219E4E1AD6B015000C0FF1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D21484FE1B74A60F0023AD16 /* libz.dylib */,
 				D2605DB51B4C55E7008D670C /* AudioToolbox.framework */,
 				50219E4C1AD6AE2A000C0FF1 /* libicucore.dylib */,
 				50219E4A1AD6AE1E000C0FF1 /* CFNetwork.framework */,
@@ -359,53 +368,11 @@
 				D2605E241B4C5812008D670C /* JSQSystemSoundPlayer */,
 				D2605D281B4C531C008D670C /* JSQMessagesViewController */,
 				D2605D1F1B4C5180008D670C /* images */,
-				50219DED1AD6A18A000C0FF1 /* AppRTCDemo-Prefix.pch */,
-				50219DEE1AD6A18A000C0FF1 /* ARDAppClient.h */,
-				50219DEF1AD6A18A000C0FF1 /* ARDAppClient.m */,
-				50219DF01AD6A18A000C0FF1 /* ARDAppClient+Internal.h */,
-				50219DF11AD6A18A000C0FF1 /* ARDAppDelegate.h */,
-				50219DF21AD6A18A000C0FF1 /* ARDAppDelegate.m */,
-				50219DF31AD6A18A000C0FF1 /* ARDAppEngineClient.h */,
-				50219DF41AD6A18A000C0FF1 /* ARDAppEngineClient.m */,
-				50219DF51AD6A18A000C0FF1 /* ARDCEODTURNClient.h */,
-				50219DF61AD6A18A000C0FF1 /* ARDCEODTURNClient.m */,
-				50219DF71AD6A18A000C0FF1 /* ARDJoinResponse.h */,
-				50219DF81AD6A18A000C0FF1 /* ARDJoinResponse.m */,
-				50219DF91AD6A18A000C0FF1 /* ARDJoinResponse+Internal.h */,
-				50219DFA1AD6A18A000C0FF1 /* ARDMainView.h */,
-				50219DFB1AD6A18A000C0FF1 /* ARDMainView.m */,
-				50219DFC1AD6A18A000C0FF1 /* ARDMainViewController.h */,
-				50219DFD1AD6A18A000C0FF1 /* ARDMainViewController.m */,
-				50219DFE1AD6A18A000C0FF1 /* ARDMessageResponse.h */,
-				50219DFF1AD6A18A000C0FF1 /* ARDMessageResponse.m */,
-				50219E001AD6A18A000C0FF1 /* ARDMessageResponse+Internal.h */,
-				50219E011AD6A18A000C0FF1 /* ARDRoomServerClient.h */,
-				50219E021AD6A18A000C0FF1 /* ARDSignalingChannel.h */,
-				50219E031AD6A18A000C0FF1 /* ARDSignalingMessage.h */,
-				50219E041AD6A18A000C0FF1 /* ARDSignalingMessage.m */,
-				50219E051AD6A18A000C0FF1 /* ARDTURNClient.h */,
-				50219E061AD6A18A000C0FF1 /* ARDUtilities.h */,
-				50219E071AD6A18A000C0FF1 /* ARDUtilities.m */,
-				50219E081AD6A18A000C0FF1 /* ARDVideoCallView.h */,
-				50219E091AD6A18A000C0FF1 /* ARDVideoCallView.m */,
-				50219E0A1AD6A18A000C0FF1 /* ARDVideoCallViewController.h */,
-				50219E0B1AD6A18A000C0FF1 /* ARDVideoCallViewController.m */,
-				50219E0C1AD6A18A000C0FF1 /* ARDWebSocketChannel.h */,
-				50219E0D1AD6A18A000C0FF1 /* ARDWebSocketChannel.m */,
+				D2B1BD0F1B4D2E0100291124 /* ARD */,
 				D2CAA5751B4C780D0003DD23 /* Info.plist */,
 				50219E0E1AD6A18A000C0FF1 /* Info.plist.back */,
 				50219E0F1AD6A18A000C0FF1 /* main.m */,
 				50219E101AD6A18A000C0FF1 /* resources */,
-				50219E171AD6A18A000C0FF1 /* RTCICECandidate+JSON.h */,
-				50219E181AD6A18A000C0FF1 /* RTCICECandidate+JSON.m */,
-				50219E191AD6A18A000C0FF1 /* RTCICEServer+JSON.h */,
-				50219E1A1AD6A18A000C0FF1 /* RTCICEServer+JSON.m */,
-				50219E1B1AD6A18A000C0FF1 /* RTCMediaConstraints+JSON.h */,
-				50219E1C1AD6A18A000C0FF1 /* RTCMediaConstraints+JSON.m */,
-				50219E1D1AD6A18A000C0FF1 /* RTCSessionDescription+JSON.h */,
-				50219E1E1AD6A18A000C0FF1 /* RTCSessionDescription+JSON.m */,
-				50219E1F1AD6A18A000C0FF1 /* UIImage+ARDUtilities.h */,
-				50219E201AD6A18A000C0FF1 /* UIImage+ARDUtilities.m */,
 				D23A2FDE1B4BEC4D00D2F5AC /* ARDChatViewController.h */,
 				D23A2FDF1B4BEC4D00D2F5AC /* ARDChatViewController.m */,
 				D23A2FE81B4BFE1400D2F5AC /* TopViewController.h */,
@@ -420,6 +387,7 @@
 		D2605D1F1B4C5180008D670C /* images */ = {
 			isa = PBXGroup;
 			children = (
+				D2B1BD121B4D497E00291124 /* image_mediam.jpg */,
 				D2605D201B4C5191008D670C /* user_icon_1.png */,
 				D2605D211B4C5191008D670C /* user_icon_2.png */,
 			);
@@ -585,6 +553,58 @@
 			path = JSQSystemSoundPlayer;
 			sourceTree = "<group>";
 		};
+		D2B1BD0F1B4D2E0100291124 /* ARD */ = {
+			isa = PBXGroup;
+			children = (
+				50219E171AD6A18A000C0FF1 /* RTCICECandidate+JSON.h */,
+				50219E181AD6A18A000C0FF1 /* RTCICECandidate+JSON.m */,
+				50219E191AD6A18A000C0FF1 /* RTCICEServer+JSON.h */,
+				50219E1A1AD6A18A000C0FF1 /* RTCICEServer+JSON.m */,
+				50219E1B1AD6A18A000C0FF1 /* RTCMediaConstraints+JSON.h */,
+				50219E1C1AD6A18A000C0FF1 /* RTCMediaConstraints+JSON.m */,
+				50219E1D1AD6A18A000C0FF1 /* RTCSessionDescription+JSON.h */,
+				50219E1E1AD6A18A000C0FF1 /* RTCSessionDescription+JSON.m */,
+				50219E1F1AD6A18A000C0FF1 /* UIImage+ARDUtilities.h */,
+				50219E201AD6A18A000C0FF1 /* UIImage+ARDUtilities.m */,
+				50219DED1AD6A18A000C0FF1 /* AppRTCDemo-Prefix.pch */,
+				50219DEE1AD6A18A000C0FF1 /* ARDAppClient.h */,
+				50219DEF1AD6A18A000C0FF1 /* ARDAppClient.m */,
+				50219DF01AD6A18A000C0FF1 /* ARDAppClient+Internal.h */,
+				50219DF11AD6A18A000C0FF1 /* ARDAppDelegate.h */,
+				50219DF21AD6A18A000C0FF1 /* ARDAppDelegate.m */,
+				50219DF31AD6A18A000C0FF1 /* ARDAppEngineClient.h */,
+				50219DF41AD6A18A000C0FF1 /* ARDAppEngineClient.m */,
+				50219DF51AD6A18A000C0FF1 /* ARDCEODTURNClient.h */,
+				50219DF61AD6A18A000C0FF1 /* ARDCEODTURNClient.m */,
+				50219DF71AD6A18A000C0FF1 /* ARDJoinResponse.h */,
+				50219DF81AD6A18A000C0FF1 /* ARDJoinResponse.m */,
+				50219DF91AD6A18A000C0FF1 /* ARDJoinResponse+Internal.h */,
+				50219DFA1AD6A18A000C0FF1 /* ARDMainView.h */,
+				50219DFB1AD6A18A000C0FF1 /* ARDMainView.m */,
+				50219DFC1AD6A18A000C0FF1 /* ARDMainViewController.h */,
+				50219DFD1AD6A18A000C0FF1 /* ARDMainViewController.m */,
+				50219DFE1AD6A18A000C0FF1 /* ARDMessageResponse.h */,
+				50219DFF1AD6A18A000C0FF1 /* ARDMessageResponse.m */,
+				50219E001AD6A18A000C0FF1 /* ARDMessageResponse+Internal.h */,
+				50219E011AD6A18A000C0FF1 /* ARDRoomServerClient.h */,
+				50219E021AD6A18A000C0FF1 /* ARDSignalingChannel.h */,
+				50219E031AD6A18A000C0FF1 /* ARDSignalingMessage.h */,
+				50219E041AD6A18A000C0FF1 /* ARDSignalingMessage.m */,
+				50219E051AD6A18A000C0FF1 /* ARDTURNClient.h */,
+				50219E061AD6A18A000C0FF1 /* ARDUtilities.h */,
+				50219E071AD6A18A000C0FF1 /* ARDUtilities.m */,
+				50219E081AD6A18A000C0FF1 /* ARDVideoCallView.h */,
+				50219E091AD6A18A000C0FF1 /* ARDVideoCallView.m */,
+				50219E0A1AD6A18A000C0FF1 /* ARDVideoCallViewController.h */,
+				50219E0B1AD6A18A000C0FF1 /* ARDVideoCallViewController.m */,
+				50219E0C1AD6A18A000C0FF1 /* ARDWebSocketChannel.h */,
+				50219E0D1AD6A18A000C0FF1 /* ARDWebSocketChannel.m */,
+				D2274F081B65369800C9280A /* ARDTransData.h */,
+				D2274F091B65369800C9280A /* ARDTransData.m */,
+			);
+			name = ARD;
+			sourceTree = "<group>";
+		};
 		D2CAA56B1B4C6F4D0003DD23 /* SVProgressHUD */ = {
 			isa = PBXGroup;
 			children = (
@@ -628,7 +648,7 @@
 				TargetAttributes = {
 					50B7C2191AD55C2F006CEEC9 = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = R2C3SYYJGW;
+						DevelopmentTeam = 2E5E462W28;
 					};
 				};
 			};
@@ -670,6 +690,7 @@
 				50219E331AD6A18A000C0FF1 /* ic_clear_black_24dp.png in Resources */,
 				D2605DA61B4C531C008D670C /* JSQMessagesCollectionViewCellOutgoing.xib in Resources */,
 				D2605D221B4C5191008D670C /* user_icon_1.png in Resources */,
+				D2B1BD141B4D497E00291124 /* image_mediam.jpg in Resources */,
 				D2CAA5731B4C6F4D0003DD23 /* SVProgressHUD.bundle in Resources */,
 				50219E341AD6A18A000C0FF1 /* ic_clear_black_24dp@2x.png in Resources */,
 				D2605D861B4C531C008D670C /* JSQMessagesAssets.bundle in Resources */,
@@ -730,6 +751,7 @@
 				50219E2B1AD6A18A000C0FF1 /* ARDVideoCallView.m in Sources */,
 				50219E381AD6A18A000C0FF1 /* RTCMediaConstraints+JSON.m in Sources */,
 				D2605D881B4C531C008D670C /* NSBundle+JSQMessages.m in Sources */,
+				D2274F0A1B65369800C9280A /* ARDTransData.m in Sources */,
 				D2605D8D1B4C531C008D670C /* UIView+JSQMessages.m in Sources */,
 				D2605DA81B4C531C008D670C /* JSQMessagesInputToolbar.m in Sources */,
 				D23A2FEA1B4BFE1400D2F5AC /* TopViewController.m in Sources */,
@@ -814,7 +836,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "a83fde2a-94ea-4fa4-ade5-f1ef1d4f7bba";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -860,7 +882,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "a83fde2a-94ea-4fa4-ade5-f1ef1d4f7bba";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

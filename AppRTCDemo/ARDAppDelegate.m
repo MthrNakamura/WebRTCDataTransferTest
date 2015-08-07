@@ -33,12 +33,16 @@
 @implementation ARDAppDelegate {
     UIWindow *_window;
 }
+@synthesize client = _client;
 
 #pragma mark - UIApplicationDelegate methods
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [RTCPeerConnectionFactory initializeSSL];
+    
+    _client = [[ARDAppClient alloc] init];
+    
     _window =  [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [_window makeKeyAndVisible];
     ARDMainViewController *viewController = [[ARDMainViewController alloc] init];
@@ -47,8 +51,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-    ARDMainViewController *viewController =
-    (ARDMainViewController *)_window.rootViewController;
+    ARDMainViewController *viewController = (ARDMainViewController *)_window.rootViewController;
     [viewController applicationWillResignActive:application];
 }
 

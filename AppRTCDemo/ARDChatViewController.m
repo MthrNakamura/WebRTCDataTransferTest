@@ -12,12 +12,19 @@
 #import <WebRTC/RTCDataChannel.h>
 #import "SVProgressHUD.h"
 
+#import "ARDAppDelegate.h"
+
+#define NUM_SHOW_MSG 4
+
 @interface ARDChatViewController () <ARDAppClientDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 {
-    ARDAppClient *_client;
+    //ARDAppClient *_client;
     UIAlertController* alert;
     NSTimer *timer;
     BOOL finishConnecting;
+    BOOL flg_choosing_media;
+    
+    ARDAppDelegate *ard_delegate;
 }
 
 @end
@@ -28,7 +35,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.inputToolbar.contentView.leftBarButtonItem = nil;//[JSQMessagesToolbarButtonFactory defaultAccessoryButtonItem];
+    self.inputToolbar.contentView.leftBarButtonItem = [JSQMessagesToolbarButtonFactory defaultAccessoryButtonItem];
     
     // ① 自分の senderId, senderDisplayName を設定
     self.senderId = @"user1";
@@ -43,6 +50,9 @@
     // ④ メッセージデータの配列を初期化
     self.messages = [NSMutableArray array];
     
+    flg_choosing_media = NO;
+    
+    ard_delegate = [[UIApplication sharedApplication] delegate];
     
     
 }
@@ -56,11 +66,18 @@
     [SVProgressHUD show];
     
     
-    _client = [[ARDAppClient alloc] initWithDelegate:self];
-    [_client connectToRoomWithId:self.roomText options:nil];
+    [ard_delegate.client setDelegate:self];
+    [ard_delegate.client connectToRoomWithId:self.roomText options:nil];
     
     timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(receiveAutoMessage) userInfo:nil repeats:YES];
     
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    NSLog(@"view will dissapear");
+    [ard_delegate.client setDelegate:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -68,22 +85,64 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)unableToolBar
+{
+    self.inputToolbar.contentView.rightBarButtonItem.enabled = NO;
+    self.inputToolbar.contentView.leftBarButtonItem.enabled = NO;
+}
+
+- (void)enableToolBar
+{
+    self.inputToolbar.contentView.rightBarButtonItem.enabled = YES;
+    self.inputToolbar.contentView.leftBarButtonItem.enabled = YES;
+}
+
 #pragma mark -JSQMessagesViewControllerDelegate
 
 - (void)didPressSendButton:(UIButton *)button withMessageText:(NSString *)text senderId:(NSString *)senderId senderDisplayName:(NSString *)senderDisplayName date:(NSDate *)date
 {
+    [self unableToolBar];
+    
     // 新しいメッセージデータを追加する
     JSQMessage *message = [JSQMessage messageWithSenderId:senderId
                                               displayName:senderDisplayName
                                                      text:text];
     
+    if ([self.messages count] == NUM_SHOW_MSG) {
+        [self.messages removeObjectAtIndex:0];
+    }
     [self.messages addObject:message];
+    
+    [SVProgressHUD showProgress:0.0f];
     // メッセージの送信処理を完了する (画面上にメッセージが表示される)
-    [self finishSendingMessageAnimated:YES];
+    //[self finishSendingMessageAnimated:YES];
     
     NSData* data = [message.text dataUsingEncoding:NSUTF8StringEncoding];
-    [_client sendData:data];
+    [ard_delegate.client sendData:data isBinary:NO userId:self.senderId];
 
+}
+
+
+//
+// 画像を送信
+//
+- (void)didPressAccessoryButton:(UIButton *)sender
+{
+    [self unableToolBar];
+    
+    UIImage* image = [UIImage imageNamed:@"image_mediam.jpg"];
+    JSQPhotoMediaItem* pmi = [[JSQPhotoMediaItem alloc] initWithImage:image];
+    JSQMessage *message = [JSQMessage messageWithSenderId:self.senderId displayName:self.senderDisplayName media:pmi];
+    if ([self.messages count] == NUM_SHOW_MSG) {
+        [self.messages removeObjectAtIndex:0];
+    }
+    [self.messages addObject:message];
+    
+    NSData* data = [[NSData alloc] initWithData:UIImagePNGRepresentation( image )];
+    [ard_delegate.client sendData:data isBinary:YES userId:self.senderId];
+    
+    [SVProgressHUD showProgress:0.0f];
+    image = nil;
 }
 
 - (id<JSQMessageData>)collectionView:(JSQMessagesCollectionView *)collectionView messageDataForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -142,31 +201,7 @@
     [self finishReceivingMessageAnimated:YES];
 }
 
-- (void)didPressAccessoryButton:(UIButton *)sender
-{
-    
-     [_client sendData:[@"chatprotocol://photo" dataUsingEncoding:NSUTF8StringEncoding]];
-    /*
-    // カメラが使用可能かどうか判定する
-    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        NSLog(@"カメラ機能へアクセスできません");
-        return;
-    }
-    ®
-    // UIImagePickerControllerのインスタンスを生成
-    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-    
-    // デリゲートを設定
-    imagePickerController.delegate = self;
-    
-    // 画像の取得先をカメラに設定
-    imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
-    
-    // 撮影画面をモーダルビューとして表示する
-    [self presentViewController:imagePickerController animated:YES completion:nil];
-    */
-    
-}
+
 
 // ================================
 //  以下、AppClientDelegateメソッド
@@ -201,8 +236,10 @@ didChangeConnectionState:(RTCICEConnectionState)state {
         case RTCICEConnectionFailed:
         case RTCICEConnectionDisconnected:
         case RTCICEConnectionClosed:
-            [_client disconnect];
-            [self dismissViewControllerAnimated:YES completion:nil];
+            if (!flg_choosing_media) {
+                [ard_delegate.client disconnect];
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
             break;
             
         default:
@@ -223,30 +260,69 @@ didReceiveRemoteVideoTrack:(RTCVideoTrack *)remoteVideoTrack {
 
 - (void)appClient:(ARDAppClient *)client
          didError:(NSError *)error {
-    [_client disconnect];
+    [ard_delegate.client disconnect];
 }
 
-- (void)appClient:(ARDAppClient *)client didReceiveRemoteData:(RTCDataBuffer *)buffer
+- (void)processRemoteText:(NSData *)data
 {
     
-    NSString* msg = [[NSString alloc] initWithData:buffer.data encoding:NSUTF8StringEncoding];
-    NSLog(@"received msg: %@", msg);
+    NSString* msg = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
     // 新しいメッセージデータを追加する
     JSQMessage *message = [JSQMessage messageWithSenderId:@"user2"
                                               displayName:@"underscore"
                                                      text:msg];
+    if ([self.messages count] == NUM_SHOW_MSG) {
+        [self.messages removeObjectAtIndex:0];
+    }
     [self.messages addObject:message];
+    
 }
 
-/*
- 
- kRTCDataChannelStateConnecting,
- kRTCDataChannelStateOpen,
- kRTCDataChannelStateClosing,
- kRTCDataChannelStateClosed
- 
- */
+- (void)processRemotePhoto:(NSData *)data
+{
+    UIImage* image = [[UIImage alloc] initWithData:data];
+    JSQPhotoMediaItem* pmi = [[JSQPhotoMediaItem alloc] initWithImage:image];
+    
+    JSQMessage* message = [JSQMessage messageWithSenderId:@"user2" displayName:@"underscore" media:pmi];
+    if ([self.messages count] == NUM_SHOW_MSG) {
+        [self.messages removeObjectAtIndex:0];
+    }
+    [self.messages addObject:message];
+    
+    image = nil;
+}
+
+- (void)processRemoteVideo:(NSData *)data
+{
+}
+
+- (void)appClient:(ARDAppClient *)client didReceiveRemoteData:(RTCDataBuffer *)buffer
+{
+    if (buffer.isBinary) {
+        // バイナリデータ
+        [self processRemotePhoto:buffer.data];
+    }
+    else {
+        // テキストデータ
+        [self processRemoteText:buffer.data];
+    }
+}
+
+- (void)appClient:(ARDAppClient *)client didChangeDataProgress:(float)progress
+{
+    [SVProgressHUD showProgress:progress];
+    NSLog(@"progress: %f", progress);
+    if (progress == 1.0f) {
+        
+        [SVProgressHUD dismiss];
+        
+        
+        [self enableToolBar];
+        [self finishSendingMessageAnimated:YES];
+    }
+}
+
 
 - (void)appClient:(ARDAppClient *)client didChangeDataChannelState:(RTCDataChannelState)state
 {
@@ -280,15 +356,17 @@ didReceiveRemoteVideoTrack:(RTCVideoTrack *)remoteVideoTrack {
     UIImage *image = (UIImage *)[info objectForKey:UIImagePickerControllerOriginalImage];
     if (image != nil) {
         
+        // 写真を送信
         NSData* data = [[NSData alloc] initWithData:UIImagePNGRepresentation( image )];
-        JSQMessagesBubbleImage* message = [[JSQMessagesBubbleImage alloc]initWithMessageBubbleImage:image highlightedImage:image];
+        JSQPhotoMediaItem* pmi = [[JSQPhotoMediaItem alloc] initWithImage:image];
+        JSQMessage *message = [JSQMessage messageWithSenderId:self.senderId displayName:self.senderDisplayName media:pmi];
         [self.messages addObject:message];
         
-        [self finishSendingMessageAnimated:YES];
-        
         // 画像を送信することを知らせる
-        [_client sendData:data];
+        [ard_delegate.client sendData:data isBinary:NO userId:self.senderId];
         
+        
+        [self finishSendingMessageAnimated:YES];
     }
     
     [self dismissViewControllerAnimated:YES completion:nil];
